@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T2SAIM Mission Control</title>
+    <style>
+        :root {
+            --bg-color: #002b36;
+            --panel-bg: #073642;
+            --text-color: #839496;
+            --text-hl: #93a1a1;
+            --accent: #268bd2;
+            --btn-bg: #2aa198;
+            --btn-hover: #21837a;
+            --error: #dc322f;
+            --border: #586e75;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background-color: var(--panel-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-hl);
+        }
+
+        .monitor-selectors button {
+            background-color: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .monitor-selectors button:hover {
+            background-color: var(--btn-hover);
+        }
+
+        /* Main Content */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Panels */
+        .panel {
+            background-color: var(--panel-bg);
+            margin: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel-header {
+            background-color: #002b36;
+            padding: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-hl);
+        }
+
+        .panel-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Layouts */
+        .layout-monitor1 .panel-left { width: 100%; display: flex; }
+        .layout-monitor1 .panel-center { display: none; }
+        .layout-monitor1 .panel-right { display: none; }
+
+        .layout-monitor2 .panel-left { width: 30%; display: flex; }
+        .layout-monitor2 .panel-center { width: 45%; display: flex; }
+        .layout-monitor2 .panel-right { width: 25%; display: flex; }
+
+        .layout-monitor3 .panel-left { display: none; }
+        .layout-monitor3 .panel-center { width: 100%; display: flex; flex-direction: column; }
+        .layout-monitor3 .panel-right { display: none; }
+
+        /* Specific Panel Adjustments for Monitor 3 */
+        .layout-monitor3 .log-container { flex: 1; overflow-y: auto; border-bottom: 2px solid var(--border); }
+        .layout-monitor3 .wterm-container { height: 40%; background: #000; color: #0f0; padding: 10px; font-family: monospace; }
+
+        .wterm-container { display: none; }
+        .layout-monitor3 .wterm-container { display: block; }
+
+        /* Task Cards */
+        .task-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .task-card:hover {
+            border-color: var(--accent);
+        }
+
+        /* Bridges Buttons */
+        .bridge-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .bridge-btn:hover { background-color: #1a75b2; }
+
+        .error-log { color: var(--error); font-weight: bold; }
+
+        .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .tab { padding: 8px 12px; cursor: pointer; background: var(--bg-color); border: 1px solid var(--border); border-bottom: none; margin-right: 5px; }
+        .tab.active { background: var(--panel-bg); color: var(--text-hl); border-top: 2px solid var(--accent); }
+    </style>
+</head>
+<body class="layout-monitor2">
+
+    <div class="top-bar">
+        <h1>T2SAIM Mission Control</h1>
+        <div class="monitor-selectors">
+            <button onclick="setMonitor('monitor1')">Monitör 1 (Görev)</button>
+            <button onclick="setMonitor('monitor2')">Monitör 2 (Kumanda)</button>
+            <button onclick="setMonitor('monitor3')">Monitör 3 (Log+Term)</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- SOL PANEL: Görev Merkezi -->
+        <div class="panel panel-left">
+            <div class="panel-header">Görev Merkezi</div>
+            <div class="panel-content">
+                <div class="tabs">
+                    <div class="tab active">Aktif</div>
+                    <div class="tab">Bloklanan</div>
+                    <div class="tab">Doğrulama</div>
+                    <div class="tab">Biten</div>
+                </div>
+                <div id="tasks-container">
+                    Yükleniyor...
+                </div>
+            </div>
+        </div>
+
+        <!-- ORTA PANEL: Canlı Log (ve Monitor 3 te Alt wterm) -->
+        <div class="panel panel-center">
+            <div class="panel-header">Canlı Log</div>
+            <div class="panel-content log-container" id="logs-container">
+                Yükleniyor...
+            </div>
+            <div class="wterm-container">
+                [wterm bekliyor - terminal placeholder]
+                <br>> _
+            </div>
+        </div>
+
+        <!-- SAĞ PANEL: Ekip Köprüleri -->
+        <div class="panel panel-right">
+            <div class="panel-header">Ekip Köprüleri</div>
+            <div class="panel-content">
+                <p>Gönderilecek Rapor: <input type="text" id="report-path" value="05_LOG_MERKEZI/MASTER_LOG.md" style="width:100%; background:var(--bg-color); color:var(--text-hl); border:1px solid var(--border); padding:5px; margin-bottom: 15px;"></p>
+                <button class="bridge-btn" onclick="sendToBridge('spark')">→ Spark'a gönder</button>
+                <button class="bridge-btn" onclick="sendToBridge('jules')">→ Jules'a gönder</button>
+                <button class="bridge-btn" onclick="sendToBridge('agy')">→ Antigravity'ye gönder</button>
+                <button class="bridge-btn" onclick="sendToBridge('geri')" style="background-color: var(--error);">→ Hermes'e geri</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setMonitor(mode) {
+            document.body.className = 'layout-' + mode;
+        }
+
+        async function fetchTasks() {
+            try {
+                const res = await fetch('/api/gorevler');
+                const data = await res.json();
+                const container = document.getElementById('tasks-container');
+                container.innerHTML = '';
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p>Görev bulunamadı.</p>';
+                    return;
+                }
+
+                data.forEach(task => {
+                    const div = document.createElement('div');
+                    div.className = 'task-card';
+                    div.innerHTML = `<strong>${task.filename}</strong><br><em>Tıklayarak incele</em>`;
+                    div.onclick = () => alert("Dosya içeriği:\n\n" + task.content.substring(0, 200) + "...");
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('tasks-container').innerHTML = '<span class="error-log">Görevler yüklenemedi.</span>';
+            }
+        }
+
+        async function fetchLogs() {
+            try {
+                const res = await fetch('/api/loglar');
+                const data = await res.json();
+                const container = document.getElementById('logs-container');
+
+                let logText = "";
+                data.forEach(log => {
+                    logText += `--- ${log.filename} ---\n${log.content}\n\n`;
+                });
+
+                // Highlight errors
+                logText = logText.replace(/(hata|error|fail)/gi, '<span class="error-log">$&</span>');
+                container.innerHTML = logText || "Log bulunamadı.";
+
+                // Auto-scroll to bottom
+                container.scrollTop = container.scrollHeight;
+            } catch (err) {
+                document.getElementById('logs-container').innerHTML = '<span class="error-log">Loglar yüklenemedi.</span>';
+            }
+        }
+
+        async function sendToBridge(target) {
+            const path = document.getElementById('report-path').value;
+            if(!path) {
+                alert("Lütfen bir rapor yolu belirtin.");
+                return;
+            }
+            try {
+                const res = await fetch('/api/kopru/' + target, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rapor_yolu: path })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("Başarılı: " + data.message);
+                } else {
+                    alert("Hata: " + data.message);
+                }
+            } catch(err) {
+                alert("Köprüye ulaşılamadı.");
+            }
+        }
+
+        // Init
+        fetchTasks();
+        fetchLogs();
+
+        // Auto-refresh logs every 5 seconds
+        setInterval(fetchLogs, 5000);
+    </script>
+</body>
+</html>
