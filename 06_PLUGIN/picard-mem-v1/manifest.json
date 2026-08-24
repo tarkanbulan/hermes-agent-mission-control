@@ -1,0 +1,14 @@
+{
+  "name": "picard-mem-v1",
+  "label": "Picard Mem",
+  "description": "Picard Bellek Bankası — sıkıştırma-öncesi OKF arşivi + OpenViking bağlantılı hafıza. Context kaybını önler, Bellek Bankası'na görsel erişim sağlar.",
+  "icon": "BrainCircuit",
+  "version": "1.0.0",
+  "tab": {
+    "path": "/picard-mem",
+    "position": "after:session-search"
+  },
+  "slots": ["sessions:top"],
+  "entry": "dist/index.js",
+  "api": "plugin_api.py"
+}
