@@ -1,0 +1,4 @@
+# Mission Control .gitignore
+*.pyc
+__pycache__/
+.git/

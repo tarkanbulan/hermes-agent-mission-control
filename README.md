@@ -1,104 +1,73 @@
-# 🎛️ HERMES AGENT — MISSION CONTROL
+# 🛰️ Hermes Mission Control
 
-**T2SAIM Görev Kontrol ve Profesyonel Proje Yönetim Merkezi**
+**Kaptan ve Ajanları için Deterministik Bir Komuta Merkezi**
 
-> Bu, T2SAIM'in **tek makine kontrol yeridir.** Tüm ajanların pencereleri buradan açılır, yapılacak işler burada takip edilir, yapılanların kayıtları buraya düşer, hafıza (RAG + OKF bilgi bankası) ve bilgi arşivi burada yaşar. Profesyonel proje yönetimi merkezidir.
+> Bu repo, tüm yapay zeka ajanlarının (Hermes, yerel modeller, kodlama ve araştırma ajanları), görev akışlarının ve uzun vadeli hafıza sisteminin tek merkezden yönetildiği kumanda merkezidir. Amacı tektir: **Bağlamı (Context) kaybetmemek, görevleri atomik parçalara bölmek ve hafızayı tek bir gerçeklik kaynağında (Single Source of Truth) toplamak.**
 
 ---
 
-## 🧠 SİSTEM MİMARİSİ (3 Katmanlı Beyin + Görev Merkezi)
+## 📊 Hızlı Durum Özeti
+
+- **Mevcut Odak (Sprint/Faz):** Faz 1 — Altyapı, Hafıza ve Rüya Protokolü Kurulumu
+- **Aktif Ajanlar:** Hermes (Orkestratör), Research-Agent, Code-Agent, Picard
+- **Kritik Engel:** Yok
+- **Rüya Protokolü:** 🔄 Aktif (boştaki ajanlar karbon sentezi üretir)
+
+## 🧭 Hızlı Erişim
+
+- [Aktif Görevler](01_GOREV_MERKEZI/AKTIF_GOREVLER.md)
+- [Ajan Protokolü](AGENTS.md)
+- [Ortak Bilgi Bankası (OKF)](02_HAFIZA_VE_BILGI_BANKASI/OKF_BILGI_BANKASI.md)
+- [Mimari Kararlar (ADR)](00_STRATEJI_VE_KARARLAR/ADR/)
+- [Rüya Protokolü](04_RUYA_PROTOKOLU/README.md)
+
+---
+
+## 🧠 Sistem Mimarisi (4 Katmanlı Beyin)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     MISSION CONTROL (bu merkez)                     │
+│                      MISSION CONTROL (bu merkez)                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  [HAVUZ — Kayıt Deposu]        [OKF — Bilgi Bankası]               │
-│  📁 02_KAYIT_HAVUZU             📁 03_OKF_BILGI_BANKASI             │
-│  • Ne YAPTIK? sorusunun cevabı  • NE BİLİYORUZ? sorusunun cevabı   │
-│  • İşlem logları, kararlar      • Doğrulanmış külliyat             │
-│  • Emirler, üretimler           • Kriz kronolojileri, formüller    │
+│  00_STRATEJI_VE_KARARLAR     "NEDEN yapıyoruz?"                    │
+│  └─ ADR, Mental Models, Kurallar                                   │
 │                                                                     │
-│        ┌──────────────────────────────────────────┐                │
-│        │  [RAG — Ortak Sorgulanabilir Hafıza]     │                │
-│        │  📁 04_RAG_ORTAK_HAFIZA                  │                │
-│        │  • Havuz + OKF → vektörleştirilmiş       │                │
-│        │  • NASIL BULURUZ? sorusunun cevabı      │                │
-│        └──────────────────────────────────────────┘                │
+│  01_GOREV_MERKEZI            "NE yapıyoruz?" (İş Akış Motoru)      │
+│  └─ Backlog, Aktif, Bloklanan, Doğrulama, Biten                    │
 │                                                                     │
-│  [GÖREV MERKEZİ]             [KARAR & RAPOR]                       │
-│  📁 01_GOREV_LISTESI          📁 05_KARARLAR · 06_RAPORLAR          │
-│  • Yapılacak işler (backlog)  • Kararlar + gerekçeler              │
-│  • Aktif / bekleyen / bitti   • Üretilen raporlar                  │
+│  02_HAFIZA_VE_BILGI_BANKASI  "NE biliyoruz & ne öğrendik?"         │
+│  └─ OKF, Hata/Çözüm, Context Snapshots (RAG girişi)                │
+│                                                                     │
+│  04_RUYA_PROTOKOLU           "RÜYA": boştayken sentetik keşif      │
+│  └─ Karbon sentezi (Bisociation) + GDPO filtresi + havuz           │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🏛️ 7 SİSTEMLİ KARARGAH HAFIZASIYLA İLİŞKİ
+## 🎯 3 Adımlı Günlük Rutin (Solo Lider)
 
-> **Bu merkez, karargahtaki mevcut 7-sistem hafızadan BAĞIMSIZ değildir; onun PROJE ODAKLI yüzeyidir.**
+1. **Check-In (5 dk):** `AKTIF_GOREVLER.md` açılır → günün 1-3 atomik görevi belirlenir → `GOREV_ATAMA_SABLONU` ile ajanlara verilir.
+2. **İcra & Doğrulama:** Ajan çıktısı `DOGRULAMA_VE_TEST.md` üzerinden kontrol edilir, test geçerse onaylanır.
+3. **Handoff & Memory (5 dk):** Bitenler `BITEN_GOREVLER_LOG.md`'ye taşınır; oturum özeti `CONTEXT_SNAPSHOTS/` altına kaydedilir. Ertesi gün sıfır context kaybıyla devam.
 
-Karargahın büyük sistemi (KB DB, state.db, kontekst kütüphanesi, kara kutu logları) **aynen durur.** Mission Control, **odaklı tek proje için** dar, self-contained bir çalışma alanı sunar:
+**Boşta kalan ajanlar → Rüya Protokolü** ile karbon sentezi üretir (bkz. `04_RUYA_PROTOKOLU`).
 
-| Buradaki Katman | Karargah Karşılığı | Farkı |
+---
+
+## 🏛️ Dörtlü Hibrit Düğüm (4-Node Unified Sync)
+
+| Düğüm | Araç | Rolü |
 | :--- | :--- | :--- |
-| `02_KAYIT_HAVUZU` | Kara kutu logları + KB DB | Proje özelinde, okunabilir Markdown |
-| `03_OKF_BILGI_BANKASI` | OKF külliyatı (`00_CENTRAL_DATA`) | Projeye gerekli doğrulanmış özetler |
-| `04_RAG_ORTAK_HAFIZA` | NotebookLM/OpenViking | Bu projenin dokümanlarını vektörleştirir |
-| `01_GOREV_LISTESI` | Seneca emir defteri | Profesyonel proje yönetimi |
+| 1. Yerel İcra | Antigravity (`agy`) / Hermes CLI | Yerel veri işleme, terminal, API çekimleri |
+| 2. Asenkron Kodlama | Google Jules | Repo'daki şartnameyi okuyup kod + PR |
+| 3. Strateji & RAG | Gemini | Geniş bağlamlı analiz, Drive dokümanları |
+| 4. Ortak Omurga | GitHub + Google Drive | Tek gerçeklik kaynağı (SSOT) |
 
-**Hedef:** Tüm ajanlar (picard, shadow, cyberknife...) bu merkeze yazar/okur; böylece proje tek pencereden yönetilir.
-
----
-
-## 📁 KLASÖR REHBERİ
-
-| Klasör | İçerik | Ajan Görevi |
-| :--- | :--- | :--- |
-| `01_GOREV_LISTESI/` | Yapılacak işler: aktif, bekleyen, tamamlanan | Görev başında güncelle |
-| `02_KAYIT_HAVUZU/` | Yapılanların logu (havuz) | Her işi buraya kaydet |
-| `03_OKF_BILGI_BANKASI/` | Doğrulanmış külliyat (kriz, formül, PDF özeti) | Referans için oku |
-| `04_RAG_ORTAK_HAFIZA/` | Vektörleştirilmiş ortak arama (kurulum + indeks) | Sorgula |
-| `05_KARARLAR/` | Kararlar + gerekçeler | Karar verilince kaydet |
-| `06_RAPORLAR/` | Üretilen raporlar | Rapor buraya |
-| `07_PERSONA/` | Ajan profilleri (her ajanın SOUL özeti) | Kendi profilini tut |
-| `99_ARHIV/` | Eski/pasif dosyalar | Taşı | 
+*Detay: `00_STRATEJI_VE_KARARLAR/MULTI_AGENT_TOPOLOGY.md`*
 
 ---
 
-## ⚙️ NASIL ÇALIŞIR
-
-### HER AJAN (oturum başında) — ZORUNLU RUTİN
-1. `AGENTS.md` oku (kurallar)
-2. `01_GOREV_LISTESI/AKTIF_GOREVLER.md` oku → görevini bul
-3. Göreve başla
-4. İş bitince → `02_KAYIT_HAVUZU/HAVUZ.md`'ye ne yaptığını KAYDET
-5. Görevi `TAMAMLANAN.md`'ye taşı
-6. Gerekirse `05_KARARLAR/` ve `06_RAPORLAR/` güncelle
-
-### KRİTİK KURAL
-> **"Kayıt yoksa iş yapılmamıştır." (R-017)** — Her işlem havuza işlenmeden kapalı sayılmaz.
-
----
-
-## 🧠 RAG / OKF / HAVUZ NASIL BAĞLANIR
-
-1. **Havuz** (`02_`) → herkesin ürettiği veriler Markdown olarak kaydedilir
-2. **OKF** (`03_`) → doğrulanmış bilgiler (kriz kronolojileri, formüller) buraya
-3. **RAG** (`04_`) → `02_` + `03_` içeriği vektörleştirilip **ortak sorgulanabilir** hale gelir (NotebookLM MCP / OpenViking)
-
-Böylece: *"Bu projede X ne zaman yapıldı?"* (havuz) ve *"Bu krizi nasıl tespit ederiz?"* (OKF+RAG) tek yerden cevaplanır.
-
----
-
-## 🚀 BAŞLANGIÇ
-
-Bu şablon boş repo üzerine kuruldu. Sıradaki adımlar (mission control'ün kendi görev listesine işlenecek):
-- [ ] 10_GOREV_LISTESI'ne proje görevleri ekle (kriz tespit sistemi)
-- [ ] 03_OKF → kriz külliyatı özetlerini kopyala
-- [ ] 04_RAG → kurulum + ilk indeksleme
-- [ ] 02_HAVUZ → oturum rutini başlat
-
-*Veritas Per Se — Komutan Picard, 24 Ağustos 2026*
+*Veritas Per Se — Mission Control, 24 Ağustos 2026*

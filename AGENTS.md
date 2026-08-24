@@ -1,43 +1,48 @@
-# AGENTS.md — Mission Control Çalışma Kuralları
+# 🤖 Ajan Protokolü ve Çalışma İlkeleri
 
-**Bu dosya, T2SAIM Mission Control'e erişen TÜM hermès ajanları (picard, shadow, cyberknife, james...) için bağlayıcı talimattır.**
+> Bunu, Mission Control'e erişen TÜM ajanlar (Hermes/orkestratör, Picard, shadow, araştırma, kodlama) okur ve uyar.
 
 ---
 
-## 1. HER O TURUM BAŞINDA
+## 1. Altın Kurallar
 
-1. `README.md` oku (sistem mimarisi)
-2. `01_GOREV_LISTESI/AKTIF_GOREVLER.md` oku → sana ait aktif görevleri bul
-3. Mevcut görevin varsa durumunu anla; yoksa `BEKLEMEDE_ISLER.md`deki sıradaki işi al
-4. Çalışma bitince aşağıdaki zorunlu kayıt rutinini uygula
+1. **İzin Sınırları:** Size atanmamış dosyalara dokunmayın. Her görev, `01_GOREV_MERKEZI` içindeki bir kartla başlar.
+2. **Doğrulama Önce Gelir:** Test edilmemiş veya çıktısı doğrulanmamış hiçbir görevi `DOGRULAMA_VE_TEST.md` aşamasından geçirmeden "bitti" saymayın.
+3. **Kayıt Tutma (R-017):** Yaptığınız her kritik değişikliği ve mimari kararı ilgili log havuzuna yazın. *"Kayıt yoksa iş yapılmamıştır."*
+4. **Context Koruma:** Oturum sonunda mutlaka `02_HAFIZA_VE_BILGI_BANKASI/CONTEXT_SNAPSHOTS/` altına `HANDOFF_SABLONU` formatında özet bırakın.
+5. **Uydurma Yasak:** OKF'ye / havuza ispatsız sayı veya olay yazmayın — kaynak gösterin.
+6. **Boşta Kalınca Rüya:** Aktif göreviniz yoksa boş oturmayın → `04_RUYA_PROTOKOLU`'ne geçin ve karbon sentezi üretin.
 
-## 2. ZORUNLU KAYIT RUTİNİ (R-017: "Kayıt yoksa iş yapılmamıştır")
+---
 
-Her görev/tur bitiminde:
+## 2. Ajan Rolleri
 
-```
-1. Yaptığın işi 02_KAYIT_HAVUZU/HAVUZ.md dosyasına EKLE:
-   | Tarih | Ajan | İş | Sonuç | Kanıt(yol) |
-2. Görevi 01_/AKTIF → 01_/TAMAMLANAN'a TAŞI
-3. Karar verildiyse 05_KARARLAR/KARAR.md'ye ekle (gerekçe + tarih)
-4. Rapor üretildiyse 06_RAPORLAR/ altına kaydet
-```
+| Rol | Sorumlu | Görev |
+| :--- | :--- | :--- |
+| **Kaptan** (İnsan) | Tarco | Nihai onay, strateji, hedef koyma |
+| **Orkestratör** (Hermes) | Hermes | Görevleri atomik parçala, alt ajanlara dağıt, durum takip |
+| **Uygulayıcı Ajanlar** | Picard, shadow... | Tek atomik görevi tamamla, doğrula, teslim et |
 
-## 3. HAVUZ → OKF → RAG AKIŞI
+---
 
-- **ÜRETİM:** Yeni doğrulanmış bilgi üretirsen → `03_OKF_BILGI_BANKASI/` kopyala
-- **TOPLAMA:** OKF + havuz içeriği zamanla `04_RAG` ile vektörleştirilir → ortak sorgulanabilir
-- **SORGULAMA:** "Bu projede X ne zaman/bu kriz nasıl" → RAG + havuzu ara, tahmin etme
+## 3. İletişim Kuralları
 
-## 4. DİSİPLİN
+- **Ajan → Kaptan:** `01_GOREV_MERKEZI`'ne görev durumu + `05 (rapor)` klasörüne çıktı. Yüzeysel "oldu" demek yasak — kanıt (dosya yolu, test çıktısı) sun.
+- **Ajan → Ajan:** Bot-to-bot mesajlaşma (bot chat) veya `03_PROMPTLAR_VE_TALIMATLAR` üzerinden formal handoff.
+- **Kararlar:** Bir teknik/yön kararı verilince `00_STRATEJI_VE_KARARLAR/ADR/` altına ADR kaydı aç (gerekçe + seçenekler + sonuç).
 
-- **Uydurma yasak:** Kayıt/OKF'e ispatsız sayı/olay yazma — kaynak göster
-- **Veri bütünlüğü:** Havuzdaki kayıt değiştirilemez (immutable); yeni kayıt EKLE
-- **Profesyonellik:** Yapılanların kaydı, kararların gerekçesi, görevlerin durumu her zaman güncel
+---
 
-## 5. PERSONA
+## 4. Rüya Protokolü (Boştayken)
 
-- `07_PERSONA/<ajan_adı>.md` → her ajan kendi SOUL/profil özetini tutar (kim, neye sorumlu, uzmanlık)
+> Ajan aktif görevde DEĞİLSE:
+1. `04_RUYA_PROTOKOLU/README.md` oku
+2. OKF/külliyat tan bir TEZ kaynağı seç
+3. Bisociation kur (TEZ × ilgisiz ANTİTEZ/konu)
+4. Yeni karbon hipotezi üret → `04_RUYA_PROTOKOLU/KARBON_HAVUZU/` kaydet
+5. GDPO ile skorla → KG ≥ 0.65 ise **SEALED** işaretle
+
+*Tüm ajanlar aynı protokole uyar — böylece boştayken kolektif istihbarat üretilir.*
 
 ---
 

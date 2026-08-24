@@ -1,0 +1,2 @@
+# .gitattributes — satır sonu normalizasyonunu kapat (CRLF warning engeli)
+* -text
