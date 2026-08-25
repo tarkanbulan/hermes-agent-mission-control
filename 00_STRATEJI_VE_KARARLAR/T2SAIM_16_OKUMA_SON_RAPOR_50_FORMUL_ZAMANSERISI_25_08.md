@@ -85,7 +85,15 @@ session_search → bu formül/HTML/simülasyon görevi **bugün bu oturumda baş
 ---
 
 ## 5️⃣ SONUÇ
-Tüm hedefler okundu (7 geçiş, 16 anlamında): 58 formül SSOT + 400 külliyat + BTF 5 yöntem + LOOPS 7 alt sistem + simülasyon 6 grup kararı + HTML formül/grafik haritası + Macroekonomics veri ispatı. **Rapor kapsamlı; eksikler (tarkan sentetik→gerçek, eski kriz verisi, SRI_psy gelirli) net.** 50 formül günlük → 30-50 yıl timeseries → kalibre kriz modeli tasarımı hazır.
+Tüm hedefler okundu (10 derin geçiş, kapsamlı): 58 formül SSOT + 400 külliyat + BTF 5 yöntem + LOOPS 7 alt sistem + simülasyon 6 grup + HTML formül/grafik haritası + Macroekonomics veri + **HARISELDON hardcoded ispatı** + korpus tarama metodolojisi (teori/formül/kalibre/varsayım/eksik). Eksikler (tarkan sentetik→gerçek, eski kriz verisi, SRI_psy) net. 50 formül günlük → 30-50 yıl timeseries → kalibre model tasarımı hazır.
+
+### 🔥 KRİTİK BULGU (çıkarılan)
+- **HARISELDON dashboard ROI/Sharpe/Hurst HARDCODED** (generate_market_data.py satır 17-26: roi 59.84/hurst 0.52 sabit) — tarkan_index sentetik + bunlar = dashboard sayıları GERÇEK HESAPLAMA DEĞİL. Bu sabitler gerçek 30-50 yıl veriyle değiştirilecek.
+- **Kalibrasyon eşikleri:** M2/NIR>15, BTP/Bund>200bps, Fiscal Breakeven $85-90, R_cancel≥0.85, C_takas≥0.70 + 56 kriz OCR (KR 1997 -%60, CH 2015 +30%...).
+- **Korpus tarama:** her korpus dosyası → teori/formül/kalibre/varsayım/eksik (MASTER: 27 teor/31 formül/28 kalibre).
+
+### ✅ KALİBRE EDİLMİŞ MODELİN TEMELİ (50 formül → timeseries)
+BTF-Amnesia (gün gün, λ=.15, σ=1.25, sıfır sızıntı) + Φ_Total + 58 formül girdisi + GERÇEK data/ (CDS/USDTRY/vol/rezerv) → 30-50 yıl timeseries → input=output kalibrasyon (ECE≤0.0124) → kalibre kriz tespit modeli.
 
 ---
-*Veritas Per Se · Komutan Picard · T2SAIM 16-katmanlı okuma + kalibre model tasarımı mühürlendi.*
+*Veritas Per Se · Komutan Picard · T2SAIM 16-katmanlı okuma + kalibre model tasarımı mühürlendi. Güncelleme: 10.geçiş + hardcoded ispat eklendi.*
